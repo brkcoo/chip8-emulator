@@ -1,6 +1,4 @@
-#define SDL_MAIN_HANDLED
-#include "SDL/x86_64-w64-mingw32/include/SDL2/SDL.h"
-#include "SDL/x86_64-w64-mingw32/include/SDL2/SDL_opengl.h"
+#include "SDL/include/SDL2/SDL.h"
 #include "chip8.h"
 
 using namespace std;
@@ -120,7 +118,7 @@ load:
             }
         }
 
-        // If draw occurred, redraw SDL screen
+        // redraw SDL screen
         // Store pixels in temporary buffer
         for (int j = 0; j < 32; ++j)
         {
@@ -137,6 +135,6 @@ load:
         SDL_RenderPresent(renderer);
 
         // Sleep to slow down emulation speed
-        Sleep(2);
+        SDL_Delay(2);
     }
 }

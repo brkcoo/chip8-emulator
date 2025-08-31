@@ -20,7 +20,7 @@ uint8_t fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void Chip8::ResetCPU(char* filename)
+void Chip8::ResetCPU(char *filename)
 {
     indexRegister = 0;
     programCounter = START_ADDRESS;          // instructions start here
@@ -160,7 +160,7 @@ void Chip8::DecodeOpcode(uint16_t opcode)
         }
         break;
     case 0xF000:
-        switch (0x000F)
+        switch (opcode & 0x000F)
         {
         case 0x0007:
             Opcode_FX07(opcode);
@@ -213,8 +213,8 @@ void Chip8::Opcode_00E0(uint16_t opcode)
 
 void Chip8::Opcode_00EE(uint16_t opcode)
 {
-    stack.pop_back();              // finished
     programCounter = stack.back(); // return to previous address
+    stack.pop_back();              // finished
 }
 
 void Chip8::Opcode_2NNN(uint16_t opcode)
@@ -342,9 +342,8 @@ void Chip8::Opcode_8XY6(uint16_t opcode)
 {
     int regx = opcode & 0x0F00;
     regx >>= 8;
-    uint8_t lsb = registers[regx] & 0x1;
+    registers[0xF] = registers[regx] & 0x1;
     registers[regx] >>= 1;
-    registers[0xF] = lsb;
 }
 
 void Chip8::Opcode_8XY7(uint16_t opcode)
@@ -354,7 +353,7 @@ void Chip8::Opcode_8XY7(uint16_t opcode)
     regx >>= 8;
     int regy = opcode & 0x00F0;
     regy >>= 4;
-    if (registers[regx] > registers[regx]) // check for underflow
+    if (registers[regx] > registers[regy]) // check for underflow
         registers[0xF] = 0;
     registers[regx] = registers[regy] - registers[regx];
 }
@@ -363,7 +362,7 @@ void Chip8::Opcode_8XYE(uint16_t opcode)
 {
     int regx = opcode & 0x0F00;
     regx >>= 8;
-    registers[0xF] = (registers[regx] >> 8) & 0x1;
+    registers[0xF] = (registers[regx] & 0x80) >> 7;
     registers[regx] <<= 1;
 }
 
@@ -425,8 +424,7 @@ void Chip8::Opcode_DXYN(uint16_t opcode)
         uint8_t spriteData = memory[indexRegister + row];
         for (int col = 0; col < 8; col++)
         { // always 8 columns (sprite is 8 pixels wide)
-            uint8_t spritePixel = spriteData >> col;
-            if (spritePixel == 0x1)
+            if ((spriteData & (0x80 >> col)) != 0)
             {
                 int x = startX + col;
                 int y = startY + row;
