@@ -20,14 +20,14 @@ uint8_t fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void Chip8::ResetCPU()
+void Chip8::ResetCPU(char* filename)
 {
     indexRegister = 0;
     programCounter = START_ADDRESS;          // instructions start here
     memset(registers, 0, sizeof(registers)); // reset registers for use
 
     FILE *in;
-    in = fopen("", "rb");
+    in = fopen(filename, "rb");
     fread(&memory[START_ADDRESS], 0xfff, 1, in);
     fclose(in);
 

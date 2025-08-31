@@ -4,6 +4,11 @@
 #include <cstdint>
 #include <fstream>
 #include <random>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <stdint.h>
+#include <windows.h>
 
 class Chip8
 {
@@ -27,7 +32,7 @@ public:
 
     uint32_t video[64][32]; // pixel display
 
-    void ResetCPU(); // initialize CPU
+    void ResetCPU(char *filename); // initialize CPU
     void Cycle();
 
     uint16_t GetNextOpcode(); // get next instruction for execution
@@ -69,4 +74,3 @@ public:
     void Opcode_FX55(uint16_t);  // store from V0 to VX with values from memory, starting at I (I left unmodified)
     void Opcode_FX65(uint16_t);  // fills from V0 to VX with values from memory, starting at I (I left unmodified)
 };
-
